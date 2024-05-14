@@ -349,11 +349,16 @@ export default function User() {
     ]
     const [boletta, setBoletta] = useState('')
     const bolettaList = ['-', '220/230 monofase', '380/400 TRIFASE']
-    const fotovoltaicoList = ['-', 'kWp_3', 'kWp_43', 'kWp_6', 'kWp_6_TRIFASE', 'kWp_81_TRIFASE', 'kWp_103_TRIFASE']
+    const fotovoltaicoList0 = ['-', 'kWp_3', 'kWp_43', 'kWp_6', 'kWp_6_TRIFASE', 'kWp_81_TRIFASE', 'kWp_103_TRIFASE']
+    const fotovoltaicoList1 = ['kWp_3', 'kWp_43', 'kWp_6']
+    const fotovoltaicoList2 = ['kWp_6_TRIFASE', 'kWp_81_TRIFASE', 'kWp_103_TRIFASE']
+    const fotovoltaicoList = boletta == bolettaList[0] ? fotovoltaicoList0 : boletta == bolettaList[1] ? fotovoltaicoList1 : fotovoltaicoList2
     const [accumulo, setAccumulo] = useState('')
     const accumuloList = ['-', 'kWh_10', 'kWh_15', 'kWh_20']
     const E14 = `${fotovoltaico}${accumulo}`
-
+    const print = () => {
+        window.print()
+    }
     const F14 = lookup1?.find((item) => { return item?.L11 == E14 })?.L22
     const E16 = walbox
     const F16 = data30?.find((item: any) => { return item.N == E16 })?.O
@@ -449,7 +454,7 @@ export default function User() {
     const indicative = data.find(item => { return item.REGIONE.name == region })?.REGIONE.value === 'non disponibile' ? '-' : Chiavi == 0 ? 0 : G24
     const ritorno = -(H14 / (beneficio as any)).toFixed(2)
     return (
-        <div id={"pageToPrint"}>
+        <div id={"pageToPrint"} style={{position:'relative'}}>
             <body data-spy="scroll" data-target=".navbar" data-offset="51">
                 <nav className="navbar fixed-top shadow-sm navbar-expand-lg bg-dark navbar-dark py-1 py-lg-0 px-lg-5">
                     <a href="index.html" className="navbar-brand d-block d-lg-none">
@@ -470,6 +475,9 @@ export default function User() {
                             <a href="#team" className="nav-item nav-link">Finanziamenti</a>
                             <a href="#faqs" className="nav-item nav-link">FAQs</a>
                         </div>
+                        <div className="navbar-nav mr-auto py-0">
+                            <button onClick={() => print()} className="nav-item nav-link">Print</button>
+                        </div>
                     </div>
                 </nav>
 
@@ -482,7 +490,6 @@ export default function User() {
                                     <div className="p-3" style={{ maxWidth: '900px' }}>
                                         <h4 className="text-white text-uppercase mb-4" style={{ letterSpacing: '3px' }}>Solar Energy</h4>
                                         <h3 className="display-2 font-secondary text-white mb-4">Innovative Solar Solution For Home</h3>
-                                        <button className="btn btn-light font-weight-bold py-3 px-5 mt-2 btn-scroll">Get A Quote</button>
                                     </div>
                                 </div>
                             </div>
@@ -597,7 +604,6 @@ export default function User() {
                                             {bolettaList.map((item, index) => {
                                                 return (
                                                     <Dropdown.Item key={index} href="#" onClick={() => setBoletta(item)}>{item}</Dropdown.Item>
-
                                                 )
                                             })}
                                         </Dropdown.Menu>
@@ -683,7 +689,7 @@ export default function User() {
                                 </div>
                                 <label style={{ color: 'red', position: 'absolute', top: 90 }}>{boletta == '"380/400 TRIFASEfase' ? 'Wallbox SOLO 22 kW' : boletta == '220/230 monofase' ? 'Wallbox SOLO 7,4 kW' : ''}</label>
                             </div>
-                            <div className="col-lg-6 row" style={{marginTop:'5%'}}>
+                            <div className="col-lg-6 row" style={{ marginTop: '5%' }}>
                                 <label>Capacità batteria auto [kWh]</label>
                                 <div className="form-group ">
                                     <input type="number" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value={batteria_auto} onChange={(e) => setbatteria(e.target.value.length > 0 ? parseFloat(e.target.value) : 0)} />
@@ -831,7 +837,7 @@ export default function User() {
                             <div className="col-lg-12 p-0 mt-3">
                                 <label>Max 78 anni (al termine del finanziamento):</label>
                                 <div className="form-group">
-                                    <input type="number" style={{color : (termine_del_finanziamento + (O50 / 12)) > 78 ? 'red' : '' }} className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value={termine_del_finanziamento + (O50 / 12)} />
+                                    <input type="number" style={{ color: (termine_del_finanziamento + (O50 / 12)) > 78 ? 'red' : '' }} className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value={termine_del_finanziamento + (O50 / 12)} />
                                 </div>
                             </div>
                             <div className="col-lg-12 p-0 mt-3">
