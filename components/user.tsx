@@ -454,7 +454,7 @@ export default function User() {
     const indicative = data.find(item => { return item.REGIONE.name == region })?.REGIONE.value === 'non disponibile' ? '-' : Chiavi == 0 ? 0 : G24
     const ritorno = -(H14 / (beneficio as any)).toFixed(2)
     return (
-        <div id={"pageToPrint"} style={{position:'relative'}}>
+        <div id={"pageToPrint"} style={{ position: 'relative' }}>
             <body data-spy="scroll" data-target=".navbar" data-offset="51">
                 <nav className="navbar fixed-top shadow-sm navbar-expand-lg bg-dark navbar-dark py-1 py-lg-0 px-lg-5">
                     <a href="index.html" className="navbar-brand d-block d-lg-none">
@@ -713,12 +713,12 @@ export default function User() {
                         <div className="col-lg-6 p-0">
                             <div className="total">
                                 <h2>{`Totale "Chiavi in mano" iva 10% inclusa`}</h2>
-                                <h2 className="text-white">{(Chiavi == 0 || Chiavi == '-') ? Chiavi : `${Chiavi}€`}</h2>
+                                <h2 className="text-white">{(Chiavi == 0 || Chiavi == '-') ? Chiavi : `${Chiavi.toLocaleString()}€`}</h2>
                             </div>
                         </div>
                         <div className="col-lg-6 p-0">
                             <div className="total bg-dark">
-                                <h2 className="text-white">{H18}</h2>
+                                <h2 className="text-white">{H18.toLocaleString()}€</h2>
                                 <p className="text-white">FVT con pratica detrazione fiscale 50% in 10 anni. Wallbox bonus 80% (spesa max 1.500€ privati / 8.000€ condomini).</p>
                             </div>
                         </div>
@@ -761,9 +761,9 @@ export default function User() {
                                         </a>
                                     </div>
                                     <div className="bg-secondary text-center p-4" style={{ height: '300px' }}>
-                                        <h3 className="m-0">{`RITORNO SULl INVESTIMENTO`}</h3>
+                                        <h3 className="m-0">{`RITORNO SULL INVESTIMENTO`}</h3>
                                         <p className="pt-3">{`Numero di anni per ritornare dell investimento, pagato con bonifico parlante. Per semplicità, si considera la detrazione fiscale 50% attualizzata al momento del pagamento stesso.`}</p>
-                                        <p className='pt-3' style={{ color: 'white', fontSize: '40px', fontWeight: 'bold' }}>{ritorno}</p>
+                                        <p className='pt-3' style={{ color: 'white', fontSize: '40px', fontWeight: 'bold' }}>{Math.floor(ritorno).toLocaleString('en-US')}</p>
                                     </div>
                                 </div>
                             </div>
@@ -781,7 +781,7 @@ export default function User() {
                                             <div className="bg-secondary text-center p-4" style={{ height: '300px' }}>
                                                 <h3 className="m-0">INVESTIMENTO</h3>
                                                 <p className="pt-3">{`BENEFICIO INVESTIMENTO in 25 anni (compreso decadimento all 80%).`}</p>
-                                                <p className='pt-3' style={{ color: 'white', fontSize: '40px', fontWeight: 'bold' }}>{investimento}</p>
+                                                <p className='pt-3' style={{ color: 'white', fontSize: '40px', fontWeight: 'bold' }}>{Math.floor(parseInt(investimento)).toLocaleString('en-US')}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -796,7 +796,7 @@ export default function User() {
                                             <div className="bg-secondary text-center p-4" style={{ height: '300px' }}>
                                                 <h3 className="m-0">BENEFICIO</h3>
                                                 <p className="pt-3">{`BENEFICIO INVESTIMENTO annuo (compreso decadimento all 80%).`}</p>
-                                                <p className='pt-3' style={{ color: 'white', fontSize: '40px', fontWeight: 'bold' }}>{beneficio}</p>
+                                                <p className='pt-3' style={{ color: 'white', fontSize: '40px', fontWeight: 'bold' }}>{Math.floor(parseInt(beneficio)).toLocaleString('en-US')}</p>
 
                                             </div>
                                         </div>
@@ -812,8 +812,10 @@ export default function User() {
                     <div className="row">
                         <div className="col-lg-6 mt-5">
                             <h3 className="m-0">PROIEZIONE FINANZIAMENTO</h3>
+
                             <div className="col-lg-12 p-0 mt-3">
-                                <label>{accontoValue} €</label>
+                            <label>Anticipo</label>
+                                <label style={{fontWeight:'500', fontSize:'18px', marginLeft:'10px'}}>( {accontoValue} € )</label>
                                 <Dropdown>
                                     <Dropdown.Toggle variant="secondary" id="dropdown-basic">
                                         {FINANZIAMENTO != '' ? FINANZIAMENTO : 'Select FINANZIAMENTO'}
@@ -837,13 +839,13 @@ export default function User() {
                             <div className="col-lg-12 p-0 mt-3">
                                 <label>Max 78 anni (al termine del finanziamento):</label>
                                 <div className="form-group">
-                                    <input type="number" style={{ color: (termine_del_finanziamento + (O50 / 12)) > 78 ? 'red' : '' }} className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value={termine_del_finanziamento + (O50 / 12)} />
+                                    <input type="number" disabled={true} style={{ color: (termine_del_finanziamento + (O50 / 12)) > 78 ? 'red' : '' }} className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value={termine_del_finanziamento + (O50 / 12)} />
                                 </div>
                             </div>
                             <div className="col-lg-12 p-0 mt-3">
                                 <label>N° mesi finanziamento (max 120):</label>
                                 <div className="form-group">
-                                    <input type="number" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value={O50} onChange={(e) => setO50(e.target.value.length > 0 ? parseFloat(e.target.value) : 0)} />
+                                    <input type="number" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value={O50} onChange={(e) => { parseInt(e.target.value) < 121 && setO50(e.target.value.length > 0 ? parseFloat(e.target.value) : 0) }} />
                                 </div>
                             </div>
                             <div className="col-lg-12 p-0 mt-3">
