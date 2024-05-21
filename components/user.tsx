@@ -1,12 +1,28 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import Slider from 'react-slick';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import Link from 'next/link';
 export default function User() {
     const [region, setRegion] = useState('')
+    const printRef = useRef<HTMLDivElement>(null);
+    const [visible, setvisible] = useState(false)
+    const handlePrint = () => {
+        setvisible(true)
+        const printContent = (printRef as any)?.current?.innerHTML;
+        const printWindow = window.open('', '', 'width=800,height=600');
+        (printWindow as any)?.document.write('<html><head><title>Print</title>');
+        (printWindow as any)?.document.write('</head><body >');
+        (printWindow as any)?.document.write(printContent);
+        (printWindow as any)?.document.write('</body></html>');
+        (printWindow as any)?.document.close();
+        (printWindow as any)?.focus();
+        (printWindow as any)?.print();
+        (printWindow as any)?.close();
+        setvisible(false)
+    };
     const [data, setData] = useState([
         {
             REGIONE: { name: 'ABRUZZO', value: 'Ok' },
@@ -354,11 +370,14 @@ export default function User() {
     const fotovoltaicoList2 = ['kWp_6_TRIFASE', 'kWp_81_TRIFASE', 'kWp_103_TRIFASE']
     const fotovoltaicoList = boletta == bolettaList[0] ? fotovoltaicoList0 : boletta == bolettaList[1] ? fotovoltaicoList1 : fotovoltaicoList2
     const [accumulo, setAccumulo] = useState('')
-    const accumuloList = ['-', 'kWh_10', 'kWh_15', 'kWh_20']
+    const accumuloList1 = ['kWh_5']
+    const accumuloList2 = ['kWh_5', 'kWh_10']
+    const accumuloList3 = ['kWh_10', 'kWh_15']
+    const accumuloList4 = ['kWh_10', 'kWh_15', 'kWh_20']
+    const accumuloList0 = ['-', 'kWh_5', 'kWh_10', 'kWh_15', 'kWh_20']
+    const accumuloList = fotovoltaico == 'kWp_3' ? accumuloList1 : fotovoltaico == 'kWp_43' ? accumuloList2 : (fotovoltaico == 'kWp_6' || fotovoltaico == 'kWp_6_TRIFASE') ? accumuloList3 : (fotovoltaico == 'kWp_81_TRIFASE' || fotovoltaico == 'kWp_103_TRIFASE') ? accumuloList4 : accumuloList0
+
     const E14 = `${fotovoltaico}${accumulo}`
-    const print = () => {
-        window.print()
-    }
     const F14 = lookup1?.find((item) => { return item?.L11 == E14 })?.L22
     const E16 = walbox
     const F16 = data30?.find((item: any) => { return item.N == E16 })?.O
@@ -476,7 +495,7 @@ export default function User() {
                             <a href="#faqs" className="nav-item nav-link">FAQs</a>
                         </div>
                         <div className="navbar-nav mr-auto py-0">
-                            <button onClick={() => print()} className="nav-item nav-link">Print</button>
+                            <button onClick={() => handlePrint()} className="nav-item nav-link">Print</button>
                         </div>
                     </div>
                 </nav>
@@ -814,8 +833,8 @@ export default function User() {
                             <h3 className="m-0">PROIEZIONE FINANZIAMENTO</h3>
 
                             <div className="col-lg-12 p-0 mt-3">
-                            <label>Anticipo</label>
-                                <label style={{fontWeight:'500', fontSize:'18px', marginLeft:'10px'}}>( {accontoValue} € )</label>
+                                <label>Anticipo</label>
+                                <label style={{ fontWeight: '500', fontSize: '18px', marginLeft: '10px' }}>( {accontoValue} € )</label>
                                 <Dropdown>
                                     <Dropdown.Toggle variant="secondary" id="dropdown-basic">
                                         {FINANZIAMENTO != '' ? FINANZIAMENTO : 'Select FINANZIAMENTO'}
@@ -931,7 +950,7 @@ export default function User() {
                         <div className="row">
                             <div className="col-lg-6">
                                 <h3 className="font-secondary display-5">{`Verifics il rendimento dell impianto all indirizzo esatto di installazione`}</h3>
-                                <Link href={"https://re.jrc.ec.europa.eu/pvg_tools/it/"}> <img className="w-100" src="/images/award.png" /></Link>
+                                <Link href={"https://re.jrc.ec.europa.eu/pvg_tools/it/"}> <img className="icon" src="/images/award.png" /></Link>
                             </div>
                             <div className="col-lg-6">
                                 <h3 className="font-secondary display-5">{`Verifica dimensioni tetto dell immobile`}</h3>
@@ -1308,6 +1327,370 @@ export default function User() {
                 <div className="container-fluid bg-dark text-white text-center border-top py-4 px-sm-3 px-md-5" style={{ borderColor: 'rgba(256, 256, 256, .05) !important' }}>
                     <p className="m-0 text-white">&copy; <a href="#">Domain Name</a>. All Rights Reserved. Designed by <a href="https://htmlcodex.com">HTML Codex</a></p>
                 </div>
+                <div style={{position:'absolute',top:0, marginLeft:'-2000px', marginTop:'-900px'}}>
+                <div ref={printRef}>
+                    <div className="container-fluid " id="about">
+                        <div className="container py-5">
+                            <div className="row align-items-center">
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <div className="col-lg-10">
+                                        <label style={{ marginBottom: '10px' }}>{`Inserire la Regione d'installazione`}</label>
+                                        <Dropdown style={{ marginTop: '10px' }}>
+                                            <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                                                {region != '' ? region : 'Select Region'}
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu>
+                                                {regionList.map((item, index) => {
+                                                    return (
+                                                        <Dropdown.Item key={index} href="#" onClick={() => setRegion(item)}>{item}</Dropdown.Item>
+
+                                                    )
+                                                })}
+                                            </Dropdown.Menu>
+                                        </Dropdown>
+                                    </div>
+                                    <div className="col-lg-2">
+                                        {region != '' &&
+                                            <div style={{ marginTop: '40px', marginBottom: '20px' }}>{data?.find((item: any) => { return item.REGIONE.name == region })?.REGIONE.value ?? 'select region'}</div>
+                                        }
+                                    </div>
+                                </div>
+                                <div className="col-lg-12 mt-3" style={{ marginTop: '10px', marginBottom: '10px' }}>
+                                    <label>Consumo annuo cliente [kWh]</label>
+                                </div>
+                                <div style={{ display: 'flex' }}>
+                                    <div className="col-lg-4 mt-1">
+                                        <div className="d-flex justify-content-between">
+                                            <label className="color">F1</label>
+                                            <label className="color" style={{ marginTop: '10px', marginBottom: '10px' }}>{F1 as any == 0 ? '-' : `${((F1 / (F1 + F2 + F3)) * 100).toFixed(2)}%`}</label>
+                                        </div>
+                                        <div className="form-group">
+                                            <input type="number" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value={F1} onChange={(e) => setF1(e.target?.value?.length > 0 ? parseFloat(e.target.value) : 0)} />
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-4 mt-" style={{ marginLeft: '20px', marginRight: '20px' }}>
+                                        <div className="d-flex justify-content-between">
+                                            <label className="color">F2</label>
+                                            <label className="color">{F2 as any == 0 ? '-' : `${((F2 / (F1 + F2 + F3)) * 100).toFixed(2)}%`}</label>
+                                        </div>
+                                        <div className="form-group">
+                                            <input type="number" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value={F2} onChange={(e) => setF2(e.target?.value?.length > 0 ? parseFloat(e.target.value) : 0)} />
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-4 mt-1" style={{ marginLeft: '2px' }}>
+                                        <div className="d-flex justify-content-between">
+                                            <label className="color">F3</label>
+                                            <label className="color">{F3 as any == 0 ? '-' : `${((F3 / (F1 + F2 + F3)) * 100).toFixed(2)}%`}</label>
+                                        </div>
+                                        <div className="form-group">
+                                            <input type="number" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value={JSON.stringify(F3)} onChange={(e) => setF3(e.target?.value?.length > 0 ? parseFloat(e.target.value) : 0)} />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-lg-12 mt-3" style={{ marginTop: '10px', marginBottom: '10px' }}>
+                                    <div className="bg-web">
+                                        Consumo annuo totale (kWh) {(F1 + F2 + F3).toFixed(2)}
+                                    </div>
+                                </div>
+                                <div style={{ marginTop: '10px', marginBottom: '10px', display: 'flex', justifyContent: 'space-between' }}>
+                                    <div className="col-lg-8 mt-4" >
+                                        <label>Prezzo medio bolletta luce IVA (€/kWh)</label>
+                                        <div className="form-group">
+                                            <input type="number" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value={Valore_Inserito} onChange={(e) => setValore(e.target.value.length > 0 ? parseFloat(e.target.value) : 0)} />
+                                        </div>
+                                    </div>
+                                    <div className='col-lg-2'>
+                                        <div className="d-flex justify-content-between">
+                                            <label style={{ marginTop: '60px' }} className="color">{data.find(item => { return item.REGIONE.name == region })?.REGIONE.value === 'non disponibile' ? '-' : Valore_Inserito as any === 0 ? 'DA INSERIRE' : 'valore inserito'}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
+                                    <div className="col-lg-6 row mt-2" style={{ position: 'relative' }}>
+                                        <label>Tensione riportata in bolletta [V]</label>
+                                        <div className='col-lg-8' style={{ marginTop: '5px', marginBottom: '5px' }}>
+                                            <Dropdown>
+                                                <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                                                    {boletta != '' ? boletta : 'Select boletta'}
+                                                </Dropdown.Toggle>
+                                                <Dropdown.Menu>
+                                                    {bolettaList.map((item, index) => {
+                                                        return (
+                                                            <Dropdown.Item key={index} href="#" onClick={() => setBoletta(item)}>{item}</Dropdown.Item>
+                                                        )
+                                                    })}
+                                                </Dropdown.Menu>
+                                            </Dropdown>
+                                        </div>
+                                        <div className='col-lg-4'>
+                                            <label style={{ marginTop: '10px' }} className="color">{data.find(item => { return item.REGIONE.name == region })?.REGIONE.value === 'non disponibile' ? '-' : boletta as any == '-' ? 'DA INSERIRE' : 'valore inserito'}</label>
+                                        </div>
+                                        <label style={{ color: 'red', position: 'absolute', top: 65 }}>{boletta == '220/230 monofase' ? 'seleziona FV MAX KWP_6' : ``}</label>
+
+                                    </div>
+                                    <div className="col-lg-6 row mt-2">
+                                        <label>{`Potenza dell impianto fotovoltaico`}</label>
+                                        <div className='col-lg-8'>
+                                            <Dropdown style={{ marginTop: '5px', marginBottom: '5px' }}>
+                                                <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                                                    {fotovoltaico != '' ? fotovoltaico : 'Select fotovoltaico'}
+                                                </Dropdown.Toggle>
+                                                <Dropdown.Menu>
+                                                    {fotovoltaicoList.map((item, index) => {
+                                                        return (
+                                                            <Dropdown.Item key={index} href="#" onClick={() => setFotovoltaico(item)}>{item}</Dropdown.Item>
+
+                                                        )
+                                                    })}
+                                                </Dropdown.Menu>
+                                            </Dropdown>
+                                        </div>
+                                        <div className='col-lg-4'>
+                                            <label style={{ marginTop: '10px' }} className="color">{data.find(item => { return item.REGIONE.name == region })?.REGIONE.value === 'non disponibile' ? '-' : monoFace === '-' ? 'DA INSERIRE' : 'valore inserito'}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-lg-12" style={{ marginTop: '20px', marginBottom: '20px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <div className="bg-web">
+                                        Produzione annua (kWh) {produ.toFixed(2)}
+                                    </div>
+                                </div>
+                                <div className="col-lg-12 row mt-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <div className='col-lg-8'>
+                                        <label>Capacità batteria accumulo</label>
+
+                                        <Dropdown style={{ marginTop: '5px', marginBottom: '5px' }}>
+                                            <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                                                {accumulo != '' ? accumulo : 'Select accumulo'}
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu>
+                                                {accumuloList.map((item, index) => {
+                                                    return (
+                                                        <Dropdown.Item key={index} href="#" onClick={() => setAccumulo(item)}>{item}</Dropdown.Item>
+
+                                                    )
+                                                })}
+                                            </Dropdown.Menu>
+                                        </Dropdown>
+                                    </div>
+                                    <div className='col-lg-4'>
+                                        <label style={{ marginTop: '50px' }} className="color">{G14 == 'INSERIRE VALORE CORRETTO' ? 'INSERIRE VALORE CORRETTO' : data?.find((item: any) => { return item.REGIONE.name == region })?.REGIONE.value == 'non disponibile' ? '-' : accumulo == '-' ? 'DA INSERIRE' : 'valore inserito'}</label>
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '10px', marginBottom: '10px' }}>
+                                    <div className="col-lg-6 row mt-2" style={{ position: 'relative' }}>
+                                        <label>Aggiungere una Wallbox?</label>
+
+                                        <div className='col-lg-8'>
+                                            <Dropdown style={{ marginTop: '5px', marginBottom: '5px' }}>
+                                                <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                                                    {walbox != '' ? walbox : 'Select walbox'}
+                                                </Dropdown.Toggle>
+                                                <Dropdown.Menu>
+                                                    {walboxList.map((item, index) => {
+                                                        return (
+                                                            <Dropdown.Item key={index} href="#" onClick={() => setWalbox(item)}>{item}</Dropdown.Item>
+
+                                                        )
+                                                    })}
+                                                </Dropdown.Menu>
+                                            </Dropdown>
+                                        </div>
+                                        <div className='col-lg-4'>
+                                            <label style={{ marginTop: '10px' }} className="color">{walbox === 'NO' ? '-' : 'valore inserito'}</label>
+                                        </div>
+                                        <label style={{ color: 'red', position: 'absolute', top: 65 }}>{boletta == '"380/400 TRIFASEfase' ? 'Wallbox SOLO 22 kW' : boletta == '220/230 monofase' ? 'Wallbox SOLO 7,4 kW' : ''}</label>
+                                    </div>
+                                    <div style={{ flexDirection: 'column' }}>
+                                        <div className="col-lg-6 row" style={{ marginTop: '5%' }}>
+                                            <label>Capacità batteria auto [kWh]</label>
+                                            <div className="form-group " style={{ marginTop: '5px', marginBottom: '5px' }}>
+                                                <input type="number" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value={batteria_auto} onChange={(e) => setbatteria(e.target.value.length > 0 ? parseFloat(e.target.value) : 0)} />
+                                            </div>
+                                            <div className='col-lg-4'>
+                                                <label style={{ marginTop: '10px' }} className="color">{batteria_auto == 0 ? '-' : 'valore inserito'}</label>
+                                            </div>
+                                        </div>
+                                        <div>{Capacità_batteria === 0 ? '-' : 'valore inserito'}</div>
+                                    </div>
+                                </div>
+                                <div className="col-lg-12 mt-3" style={{ marginTop: '10px', marginBottom: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <div className="bg-web-blue">
+                                        Tempo di ricarica stimato (h) {data20?.find((item) => { return item?.N == walbox })?.Q != null ? (batteria_auto / (data20?.find((item) => { return item?.N == walbox })?.Q as any)).toFixed(2) : 'N/A'}
+                                    </div>
+                                </div>
+
+
+
+
+
+
+                                <div className="container-fluid">
+                                    <div className="row">
+                                        <div className="col-lg-6 p-0">
+                                            <div className="total" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                                <h2>{`Totale "Chiavi in mano" iva 10% inclusa`}</h2>
+                                                <h2 className="text-white">{(Chiavi == 0 || Chiavi == '-') ? Chiavi : `${Chiavi.toLocaleString()}€`}</h2>
+                                            </div>
+                                        </div>
+                                        <div className="col-lg-6 p-0">
+                                            <div className="total bg-dark" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                                <p className="text-white" style={{ width: '80%' }}>FVT con pratica detrazione fiscale 50% in 10 anni. Wallbox bonus 80% (spesa max 1.500€ privati / 8.000€ condomini).</p>
+
+                                                <h2 className="text-white">{H18.toLocaleString()}€</h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="bg-gallery padding mb-5">
+                                    <div className="container">
+                                        <div className="row">
+                                            <div className="col-lg-6">
+                                                <div className="product-item mb-2">
+
+                                                    <div className="bg-secondary text-center p-4">
+                                                        <h3 className="m-0" style={{ margin: '0', padding: '0' }}>{`RITORNO SULL INVESTIMENTO`}</h3>
+                                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                                            <p className="pt-3" style={{ width: '90%' }}>{`Numero di anni per ritornare dell investimento, pagato con bonifico parlante. Per semplicità, si considera la detrazione fiscale 50% attualizzata al momento del pagamento stesso.`}</p>
+                                                            <p className='pt-3' style={{ fontSize: '20px', fontWeight: 'bold' }}>{Math.floor(ritorno).toLocaleString('en-US')}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <div className="row">
+                                                    <div className="col-lg-6">
+                                                        <div className="product-item mb-2">
+                                                            <div className="bg-secondary text-center p-4">
+                                                                <h3 className="m-0" style={{ margin: '0', height: '10px', padding: '0' }}>INVESTIMENTO</h3>
+                                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+
+                                                                    <p className="pt-3" style={{ marginTop: '-10px', margin: '0', padding: '0' }}>{`BENEFICIO INVESTIMENTO in 25 anni (compreso decadimento all 80%).`}</p>
+                                                                    <p className='pt-3' style={{ fontSize: '30px', marginTop: '-10px', fontWeight: 'bold' }}>{Math.floor(parseInt(investimento)).toLocaleString('en-US')}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-lg-6">
+                                                        <div className="product-item mb-2">
+
+                                                            <div className="bg-secondary text-center p-4" style={{ marginTop: '-10px' }}>
+                                                                <h3 className="m-0">BENEFICIO</h3>
+                                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+
+                                                                    <p className="pt-3" style={{ marginTop: '-10px' }}>{`BENEFICIO INVESTIMENTO annuo (compreso decadimento all 80%).`}</p>
+                                                                    <p className='pt-3' style={{ fontSize: '30px', marginTop: '-10px', fontWeight: 'bold' }}>{Math.floor(parseInt(beneficio)).toLocaleString('en-US')}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="container">
+                                    <div className="row">
+                                        <div className="col-lg-6 mt-5">
+                                            <h3 className="m-0">PROIEZIONE FINANZIAMENTO</h3>
+
+                                            <div className="col-lg-12 p-0 mt-3">
+                                                <label>Anticipo</label>
+                                                <label style={{ fontWeight: '500', fontSize: '18px', marginLeft: '10px' }}>( {accontoValue} € )</label>
+                                                <Dropdown style={{ marginTop: '5px', marginBottom: '5px' }}>
+                                                    <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                                                        {FINANZIAMENTO != '' ? FINANZIAMENTO : 'Select FINANZIAMENTO'}
+                                                    </Dropdown.Toggle>
+                                                    <Dropdown.Menu>
+                                                        {FINANZIAMENTOList.map((item, index) => {
+                                                            return (
+                                                                <Dropdown.Item key={index} href="#" onClick={() => setFINANZIAMENTO(item)}>{item}</Dropdown.Item>
+
+                                                            )
+                                                        })}
+                                                    </Dropdown.Menu>
+                                                </Dropdown>
+                                            </div>
+                                            <div className="col-lg-12 p-0 mt-3" style={{ marginTop: '5px', marginBottom: '5px' }}>
+                                                <label>Età richiedente:</label>
+                                                <div className="form-group" style={{ marginTop: '5px', marginBottom: '5px' }}>
+                                                    <input type="number" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value={termine_del_finanziamento} onChange={(e) => settermine_del_finanziamento(e.target.value.length > 0 ? parseFloat(e.target.value) : 0)} />
+                                                </div>
+                                            </div>
+                                            <div className="col-lg-12 p-0 mt-3">
+                                                <label>Max 78 anni (al termine del finanziamento):</label>
+                                                <div className="form-group" style={{ marginTop: '5px', marginBottom: '5px' }}>
+                                                    <input type="number" disabled={true} style={{ color: (termine_del_finanziamento + (O50 / 12)) > 78 ? 'red' : '' }} className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value={termine_del_finanziamento + (O50 / 12)} />
+                                                </div>
+                                            </div>
+                                            <div className="col-lg-12 p-0 mt-3">
+                                                <label>N° mesi finanziamento (max 120):</label>
+                                                <div className="form-group" style={{ marginTop: '5px', marginBottom: '5px' }}>
+                                                    <input type="number" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value={O50} onChange={(e) => { parseInt(e.target.value) < 121 && setO50(e.target.value.length > 0 ? parseFloat(e.target.value) : 0) }} />
+                                                </div>
+                                            </div>
+                                            <div className="col-lg-12 p-0 mt-3">
+                                                <label>Rata mensile (indicativa):</label>
+                                                <div className="form-group" style={{ marginTop: '5px', marginBottom: '5px' }}>
+                                                    <input type="number" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value={indicative.toFixed(2)} />
+                                                </div>
+                                            </div>
+                                            <div className="col-lg-12 p-0 mt-3">
+                                                <label>Rata con SmartHome:</label>
+                                                <div className="form-group" style={{ marginTop: '5px', marginBottom: '5px' }}>
+                                                    <input type="number" className="form-control green" id="exampleInputEmail1" aria-describedby="emailHelp" value={(indicative - 44).toFixed(2)} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-lg-6 mt-5">
+                                            <div className="product-item mb-2">
+                                                <div className="product-img">
+                                                    <a type="button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">
+                                                        <i className="fa fa-2x fa-plus text-white"></i>
+                                                    </a>
+                                                </div>
+                                                <div className="bg-smoke text-center p-4">
+                                                    <h3 className="m-0">PROIEZIONE BENEFICIO MENSILE</h3>
+                                                    <p className="pt-3">Beneficio medio mensile generato da: Risparmio in bolletta; Recupero della detrazione fiscale del 50%; Contributo vendita energia (GSE).</p>
+                                                    <label style={{ width: '100%', textAlign: 'center' }}>{beneficio_mencil?.toFixed(2)}</label>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <div className="grey">
+                                    <div className="container">
+                                        <div className="row">
+                                            <div className="col-lg-6">
+                                                <div className="blue">
+                                                    <h2>Con SMARTHOME DUAL sconto di:</h2><br />
+                                                    <h4>-44€/mese per i primi 12 mesi, poi</h4> <br />
+                                                    <h4>{`-26,40€/mese fino a completa restituzione dell importo (iva 10%)`}</h4>
+
+                                                </div>
+
+                                            </div>
+                                            <div className="col-lg-6">
+                                                <div className="whitearea">
+                                                    <h3>QUANTO SPAZIO SERVE PER INSTALLARE IL FOTOVOLTAICO SELEZIONATO?</h3>
+                                                    <div className="row">
+                                                        <div className="col-lg-6">
+                                                            <label className="pt-3">TETTO A FALDE (m2)</label>
+                                                            <div className="grey-box">{O40}</div>
+                                                        </div>
+                                                        <div className="col-lg-6">
+                                                            <label className="pt-3">TETTO PIANO (m2)</label>
+                                                            <div className="grey-box">{O43}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
 
 
 
@@ -1317,6 +1700,101 @@ export default function User() {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+
+                </div>
 
 
             </body >
