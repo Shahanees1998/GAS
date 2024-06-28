@@ -1,21 +1,26 @@
-import Image from "next/image";
 import styles from "./page.module.css";
 import './globals.css';
+import EE from "../../components/EE";
+import prisma from "../../lib/prisma";
 
-import User from "../../components/user";
-import 'primeicons/primeicons.css';
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-export default function Home() {
+export default async function Home() {
+  const eei5 = await prisma.eei.findMany()
+  const eek5 = await prisma.eek.findMany()
+
+  const gasi5 = await prisma.gasi.findMany()
+  const gask5 = await prisma.gask.findMany()
+
+  const password = await prisma.setting.findUnique({where : {name : 'password'}})
   return (
     <main className={styles.main}>
       <head>
-        <title>Your Title</title>
+        <title>Your Title 2</title>
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
       </head>
-      <User />
+      <body>
+        <EE eei5={eei5} eeik={eek5} gasi5={gasi5} gasik={gask5} password={password?.value}/>
+      </body>
+
     </main>
   );
 }

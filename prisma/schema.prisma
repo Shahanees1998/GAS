@@ -18,3 +18,33 @@ model User {
   email String  @unique
   name  String?
 }
+
+model Eei {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  month String
+  value Float
+}
+
+model Eek {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  month String
+  value Float
+}
+
+model Gasi {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  month String
+  value Float
+}
+
+model Gask {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  month String
+  value Float
+}
+
+model Setting {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  name  String @unique
+  value String
+}
